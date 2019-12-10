@@ -27,8 +27,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
 
 /**
  *
@@ -47,7 +45,7 @@ public class RPNForm extends JFrame implements ActionListener {
   private final JButton[][] buttonGrid;
   
   private boolean isHelp = false, 
-          command_enterer = false, 
+          number_entered = false, 
           display_error = false,
           allow_write = true;
   
@@ -270,14 +268,14 @@ public class RPNForm extends JFrame implements ActionListener {
                            if(RPNForm.displayTextField.getText().equals("")) RPNForm.displayTextField.setText("0.");
                            else if(!Double.isNaN(Double.valueOf(RPNForm.displayTextField.getText())) && RPNForm.displayTextField.getText().indexOf(".") < 0)
                                RPNForm.displayTextField.setText(RPNForm.displayTextField.getText() + ".");
-                           if(this.command_enterer) this.command_enterer = false;
+                           if(this.number_entered) this.number_entered = false;
                             } break;
                 default: this.defaultCheck(actionCommand);
             }
         }
         catch (Exception ex) {
             RPNForm.displayTextField.setText("");
-            this.command_enterer = false;
+            this.number_entered = false;
         }
         }
     }
@@ -308,7 +306,7 @@ public class RPNForm extends JFrame implements ActionListener {
             reg_file.close();
         }
         catch (IOException e) {
-            System.out.println("Register file error: " + e.toString());
+            System.out.println("Register file error>>" + e.toString());
         }     
         try {
             final PrintWriter stack_file = new PrintWriter(new FileOutputStream("stack_file.txt"));
@@ -319,7 +317,7 @@ public class RPNForm extends JFrame implements ActionListener {
             stack_file.close();
         }
         catch (IOException e) {
-            System.out.println("Stack file error: " + e.toString());
+            System.out.println("Stack file error>>" + e.toString());
         }
     }
     
@@ -344,7 +342,7 @@ public class RPNForm extends JFrame implements ActionListener {
             }
         }
         catch (IOException e) {
-            System.out.println("reg_file.txt error: " + e.toString());
+            System.out.println("Register File.txt error>>" + e.toString());
         }        
         
         try {
@@ -367,14 +365,14 @@ public class RPNForm extends JFrame implements ActionListener {
             }
         }
         catch (IOException e) {
-            System.out.println("stack_file.txt error: " + e.toString());
+            System.out.println("Stack File error>>" + e.toString());
         }
     }
 
         
     
     private void clear(boolean all, String actionCommand){
-        this.command_enterer = true;
+        this.number_entered = true;
         RPNCalculator.Instructions.addLast(actionCommand);
         if(all){
             RPNCalculator.getInstance().getTheStack().clear();
@@ -409,22 +407,15 @@ public class RPNForm extends JFrame implements ActionListener {
         RPNCalculator.Instructions.addLast(actionCommand);
 
         if (!this.inString.equals("")) {
-            double num = 0.0;
+            if (Double.valueOf(RPNForm.displayTextField.getText()) == 0.0) {
+                return;
+            }
             try {
-                num = Double.valueOf(RPNForm.displayTextField.getText());
+                 RPNForm.displayTextField.setText(this.inString = String.valueOf(Double.valueOf(this.inString)*(-1.0)));
             }
             catch (Exception e) {
                 RPNForm.displayTextField.setText(this.inString = "");
-            }
-            if (num == 0.0) {
-                return;
-            }
-            if (!this.inString.substring(0, 1).equals("-")) {
-                RPNForm.displayTextField.setText(this.inString = "-" + this.inString);
-            }
-            else {
-                RPNForm.displayTextField.setText(this.inString = this.inString.substring(1));
-            }
+            }       
         }
     }
     
@@ -434,10 +425,9 @@ public class RPNForm extends JFrame implements ActionListener {
 
             RPNCalculator.Instructions.addLast(actionCommand);
             
-            if (this.command_enterer) {
-                this.command_enterer = false;
-                this.inString = "";
-                RPNForm.displayTextField.setText(this.inString);
+            if (this.number_entered) {
+                this.number_entered = false;
+                RPNForm.displayTextField.setText(this.inString = "");
             }
             try {
                 if (RPNForm.displayTextField.getText().equals("") || !Double.isNaN(Double.valueOf(RPNForm.displayTextField.getText()))) {
@@ -455,7 +445,7 @@ public class RPNForm extends JFrame implements ActionListener {
             
             RPNCalculator.Instructions.addLast(actionCommand);
             
-            if (!this.command_enterer) {
+            if (!this.number_entered) {
                 this.numberEntered(this.inString);
             }
             if (RPNCalculator.getInstance().actOnCommand(actionCommand)) {
@@ -488,7 +478,7 @@ public class RPNForm extends JFrame implements ActionListener {
                 else {
                     RPNForm.displayTextField.setText(RPNCalculator.getInstance().theStack.peekFirst().toString());
                 }
-                this.command_enterer = true;
+                this.number_entered = true;
             }
         }
         catch (Exception e) {
@@ -498,7 +488,7 @@ public class RPNForm extends JFrame implements ActionListener {
             else {
                 RPNForm.displayTextField.setText(RPNCalculator.getInstance().theStack.peekFirst().toString());
             }
-            this.command_enterer = true;
+            this.number_entered = true;
         }
     }
     
@@ -540,7 +530,7 @@ public class RPNForm extends JFrame implements ActionListener {
             else {
                 RPNForm.displayTextField.setText(RPNCalculator.getInstance().theStack.peekFirst().toString());
             }
-            this.command_enterer = true;
+            this.number_entered = true;
         }
     }
 
