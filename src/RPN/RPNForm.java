@@ -195,13 +195,7 @@ public class RPNForm extends JFrame implements ActionListener {
     displayTextField.addKeyListener(new KeyListener() {
       @Override
       public void keyTyped(KeyEvent e) {
-         if(!(Character.isDigit(e.getKeyChar()) || e.getKeyChar() == '+' || e.getKeyChar() == '-' 
-                 || e.getKeyChar() == '*' || e.getKeyChar() == '/' || e.getKeyChar() == '^' || e.getKeyChar() == '%' 
-                 || e.getKeyChar() == KeyEvent.VK_ENTER || e.getKeyChar() == KeyEvent.VK_BACK_SPACE 
-                 || e.getKeyChar() == 'X' || e.getKeyChar() == 'x')){
-            doBackspace();
-            allow_write = false;
-         }
+
       }
 
       @Override
@@ -211,6 +205,73 @@ public class RPNForm extends JFrame implements ActionListener {
 
       @Override
       public void keyReleased(KeyEvent e) {
+          if(!(e.getKeyChar() == '+' || e.getKeyChar() == '-' 
+                 || e.getKeyChar() == '*' || e.getKeyChar() == '/' || e.getKeyChar() == '^' || e.getKeyChar() == '%' 
+                 || e.getKeyChar() == KeyEvent.VK_ENTER || e.getKeyChar() == KeyEvent.VK_BACK_SPACE 
+                 || e.getKeyChar() == 'X' || e.getKeyChar() == 'x' || e.getKeyChar() == '.'
+                 || e.getKeyChar() == '?' || e.getKeyChar() == 'c' || Character.isDigit(e.getKeyChar()))){
+            RPNForm.displayTextField.setText("");
+         }else{
+             switch(e.getKeyChar()){
+                 case 'x': if (RPNCalculator.getInstance().getTheStack().size()< 2  ){
+                                RPNForm.displayTextField.setText("");
+                            }
+                            else if(RPNCalculator.getInstance().actOnCommand(String.valueOf(e.getKeyChar()))) {
+                                RPNForm.displayTextField.setText(RPNCalculator.getInstance().theStack.peekFirst().toString());
+                            } break;
+                 case 'X': if (RPNCalculator.getInstance().getTheStack().size()< 2  ){
+                                RPNForm.displayTextField.setText("");
+                            }
+                            else if (RPNCalculator.getInstance().actOnCommand(String.valueOf(e.getKeyChar()).toLowerCase())) {
+                                RPNForm.displayTextField.setText(RPNCalculator.getInstance().theStack.peekFirst().toString());
+                            } break;
+                 case '*': if (RPNCalculator.getInstance().getTheStack().size()< 2  ){
+                                RPNForm.displayTextField.setText("");
+                            }
+                            else if (RPNCalculator.getInstance().actOnCommand("x")) {
+                                RPNForm.displayTextField.setText(RPNCalculator.getInstance().theStack.peekFirst().toString());
+                            } break;
+                 case '/': if (RPNCalculator.getInstance().getTheStack().size()< 2  ){
+                                RPNForm.displayTextField.setText("");
+                            }
+                            else if (RPNCalculator.getInstance().actOnCommand(String.valueOf(e.getKeyChar()))) {
+                                RPNForm.displayTextField.setText(RPNCalculator.getInstance().theStack.peekFirst().toString());
+                            } break;
+                 case '+': if (RPNCalculator.getInstance().getTheStack().size()< 2  ){
+                                RPNForm.displayTextField.setText("");
+                            }
+                            else if (RPNCalculator.getInstance().actOnCommand(String.valueOf(e.getKeyChar()).toLowerCase())) {
+                                RPNForm.displayTextField.setText(RPNCalculator.getInstance().theStack.peekFirst().toString());
+                            } break;
+                 case '-': if (RPNCalculator.getInstance().getTheStack().size()< 2  ){
+                                RPNForm.displayTextField.setText("");
+                            }
+                            else if (RPNCalculator.getInstance().actOnCommand(String.valueOf(e.getKeyChar()))) {
+                                RPNForm.displayTextField.setText(RPNCalculator.getInstance().theStack.peekFirst().toString());
+                            } break;
+                 case '%': if (RPNCalculator.getInstance().getTheStack().size()< 2  ){
+                                RPNForm.displayTextField.setText("");
+                            }
+                            else if (RPNCalculator.getInstance().actOnCommand(String.valueOf(e.getKeyChar()))) {
+                                RPNForm.displayTextField.setText(RPNCalculator.getInstance().theStack.peekFirst().toString());
+                            } break;
+                 case '^': if (RPNCalculator.getInstance().getTheStack().size()< 2  ){
+                                RPNForm.displayTextField.setText("");
+                            }
+                            else if (RPNCalculator.getInstance().actOnCommand(String.valueOf(e.getKeyChar()))) {
+                                RPNForm.displayTextField.setText(RPNCalculator.getInstance().theStack.peekFirst().toString());
+                            } break;
+                 case '.': {RPNCalculator.Instructions.addLast(String.valueOf(e.getKeyChar()));
+                           if(RPNForm.displayTextField.getText().indexOf(".") <= 0) RPNForm.displayTextField.setText("0.");
+                           else if(!Double.isNaN(Double.valueOf(RPNForm.displayTextField.getText())) && RPNForm.displayTextField.getText().indexOf(".") < 0)
+                               RPNForm.displayTextField.setText(RPNForm.displayTextField.getText() + ".");
+                           if(number_entered) number_entered = false;
+                            } break;
+                 case 'c': clear(true, String.valueOf(e.getKeyChar())); break;
+                 case '?': isHelp = true; RPNForm.displayTextField.setText("Press key to get help ..."); break;
+                 default: initCheck(String.valueOf(e.getKeyChar()));
+             }
+         }
 
       }
   });

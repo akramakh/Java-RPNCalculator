@@ -38,24 +38,18 @@ public class RPNCalculator
     }
     
     public boolean actOnCommand(String cmd) {
-        if (cmd.equals("Up")) {
-            if (this.theStack.size() < 2) {
+        if (this.theStack.size() < 2) {
                 return true;
-            }
+        }
+        if (cmd.equals("Up")) {
             this.theStack.addLast(this.theStack.pop());
             return true;
         }
         else if (cmd.equals("Down")) {
-            if (this.theStack.size() < 2) {
-                return true;
-            }
             this.theStack.push(this.theStack.pollLast());
             return true;
         }
         else {
-            if (this.theStack.size() < 2) {
-                return false;
-            }
             final double num_1 = this.theStack.pop();
             final double num_2 = this.theStack.pop();
             switch(cmd){
